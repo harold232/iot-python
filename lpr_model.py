@@ -2,12 +2,16 @@ import easyocr
 import cv2
 import numpy as np
 
-reader = easyocr.Reader(['en'])
-
+reader = None
 
 def detectar_placa(image_bytes):
+    global reader
+    if reader is None:
+        reader = easyocr.Reader(['en'])  # Se carga una sola vez al primer request
+
     np_img = np.frombuffer(image_bytes, np.uint8)
     img = cv2.imdecode(np_img, cv2.IMREAD_COLOR)
+    img = cv2.resize(img, (640, 480))  # Reduce uso de RAM y tiempo
 
     results = reader.readtext(img)
 
